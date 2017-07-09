@@ -55,6 +55,7 @@ contract PayToFutureMiner {
     return tmpBal;
   }
 
+  // Return maximum balance that may be withdrawn
   function balanceDrawable() constant returns (uint) {
     // Determine total thawed balance
     uint drawable = balanceThawed();
@@ -70,6 +71,7 @@ contract PayToFutureMiner {
     return drawable;
   }
 
+  // Withdraw thawed ETH to anyone who requests it
   function transfer(address to, uint value) returns (bool success) {
     // Value size limiting
     if (value > balanceDrawable())
