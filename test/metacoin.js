@@ -1,8 +1,8 @@
-var PayToFutureMiner = artifacts.require("./PayToFutureMiner.sol");
+var MetaCoin = artifacts.require("./MetaCoin.sol");
 
-contract('PayToFutureMiner', function(accounts) {
-  it("should put 10000 PayToFutureMiner in the first account", function() {
-    return PayToFutureMiner.deployed().then(function(instance) {
+contract('MetaCoin', function(accounts) {
+  it("should put 10000 MetaCoin in the first account", function() {
+    return MetaCoin.deployed().then(function(instance) {
       return instance.getBalance.call(accounts[0]);
     }).then(function(balance) {
       assert.equal(balance.valueOf(), 10000, "10000 wasn't in the first account");
@@ -13,7 +13,7 @@ contract('PayToFutureMiner', function(accounts) {
     var metaCoinBalance;
     var metaCoinEthBalance;
 
-    return PayToFutureMiner.deployed().then(function(instance) {
+    return MetaCoin.deployed().then(function(instance) {
       meta = instance;
       return meta.getBalance.call(accounts[0]);
     }).then(function(outCoinBalance) {
@@ -39,7 +39,7 @@ contract('PayToFutureMiner', function(accounts) {
 
     var amount = 10;
 
-    return PayToFutureMiner.deployed().then(function(instance) {
+    return MetaCoin.deployed().then(function(instance) {
       meta = instance;
       return meta.getBalance.call(account_one);
     }).then(function(balance) {

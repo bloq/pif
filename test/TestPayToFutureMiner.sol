@@ -4,22 +4,26 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
 import "../contracts/PayToFutureMiner.sol";
 
-contract TestMetacoin {
+contract TestPayToFutureMiner {
 
   function testInitialBalanceUsingDeployedContract() {
     PayToFutureMiner meta = PayToFutureMiner(DeployedAddresses.PayToFutureMiner());
 
-    uint expected = 10000;
+    uint expected = 0;
 
-    Assert.equal(meta.getBalance(tx.origin), expected, "Owner should have 10000 PayToFutureMiner initially");
+    Assert.equal(meta.balanceFrozen(), expected, "Starting frozen balance should be zero");
+    Assert.equal(meta.balanceThawed(), expected, "Starting thawed balance should be zero");
+    Assert.equal(meta.balanceDrawable(), expected, "Starting drawable balance should be zero");
   }
 
   function testInitialBalanceWithNewPayToFutureMiner() {
     PayToFutureMiner meta = new PayToFutureMiner();
 
-    uint expected = 10000;
+    uint expected = 0;
 
-    Assert.equal(meta.getBalance(tx.origin), expected, "Owner should have 10000 PayToFutureMiner initially");
+    Assert.equal(meta.balanceFrozen(), expected, "Starting frozen balance should be zero");
+    Assert.equal(meta.balanceThawed(), expected, "Starting thawed balance should be zero");
+    Assert.equal(meta.balanceDrawable(), expected, "Starting drawable balance should be zero");
   }
 
 }
