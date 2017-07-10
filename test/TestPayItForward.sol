@@ -2,12 +2,12 @@ pragma solidity ^0.4.2;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import "../contracts/PayToFutureMiner.sol";
+import "../contracts/PayItForward.sol";
 
-contract TestPayToFutureMiner {
+contract TestPayItForward {
 
   function testInitialBalanceUsingDeployedContract() {
-    PayToFutureMiner meta = PayToFutureMiner(DeployedAddresses.PayToFutureMiner());
+    PayItForward meta = PayItForward(DeployedAddresses.PayItForward());
 
     uint expected = 0;
 
@@ -16,8 +16,8 @@ contract TestPayToFutureMiner {
     Assert.equal(meta.balanceDrawable(), expected, "Starting drawable balance should be zero");
   }
 
-  function testInitialBalanceWithNewPayToFutureMiner() {
-    PayToFutureMiner meta = new PayToFutureMiner();
+  function testInitialBalanceWithNewPayItForward() {
+    PayItForward meta = new PayItForward();
 
     uint expected = 0;
 

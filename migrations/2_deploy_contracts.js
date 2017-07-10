@@ -1,5 +1,5 @@
-var PayToFutureMiner = artifacts.require("./PayToFutureMiner.sol");
+var PayItForward = artifacts.require("./PayItForward.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(PayToFutureMiner);
+  deployer.deploy(PayItForward);
 };

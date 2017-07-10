@@ -1,7 +1,7 @@
 {
-  "name": "p2fm",
+  "name": "pif",
   "version": "0.0.1",
-  "description": "Pay To Future Miner smart contract",
+  "description": "Pay It Forward smart contract",
   "main": "truffle.js",
   "scripts": {
     "test": "scripts/test.sh",

@@ -40,16 +40,16 @@ function increaseTime(duration) {
   })
 }
 
-var PayToFutureMiner = artifacts.require("./PayToFutureMiner.sol");
+var PayItForward = artifacts.require("./PayItForward.sol");
 
-contract('PayToFutureMiner', function(accounts) {
+contract('PayItForward', function(accounts) {
 
   let shouldntFail = function(err) {
     assert.isFalse(!!err);
   };
 
   it("zero initial balances", async function() {
-    let contract = await PayToFutureMiner.deployed();
+    let contract = await PayItForward.deployed();
 
     let expected = await contract.balanceFrozen();
     assert.equal(expected, 0, "balanceFrozen must be zero");
@@ -62,7 +62,7 @@ contract('PayToFutureMiner', function(accounts) {
   });
 
   it('send funds to contract', async function() {
-    let contract = await PayToFutureMiner.deployed();
+    let contract = await PayItForward.deployed();
 
     // Give account[0] 20 ether
     sendTx(web3.eth.coinbase, accounts[0], ether(20));
@@ -106,7 +106,7 @@ contract('PayToFutureMiner', function(accounts) {
   });
 
   it('verify time lock expires - WIP', async function() {
-    let contract = await PayToFutureMiner.deployed();
+    let contract = await PayItForward.deployed();
 
     // Verify total contract balance
     let expected = ether(4);

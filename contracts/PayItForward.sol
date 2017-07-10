@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-contract PayToFutureMiner {
+contract PayItForward {
   struct FrozenEnt {
     uint amount;	// amount deposited in contract, and frozen
     uint thawTime;	// timestamp when amount may be thawed (entry expires)
@@ -15,7 +15,7 @@ contract PayToFutureMiner {
   uint constant public drawPeriod = 60;	  // number of seconds between draws
 
   // constructor
-  function PayToFutureMiner() {
+  function PayItForward() {
   }
 
   // default ETH recipient endpoint
