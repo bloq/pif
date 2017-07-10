@@ -105,7 +105,7 @@ contract('PayToFutureMiner', function(accounts) {
 
   });
 
-  it('verify time lock expires - TODO', async function() {
+  it('verify time lock expires - WIP', async function() {
     let contract = await PayToFutureMiner.deployed();
 
     // Verify total contract balance
@@ -131,10 +131,22 @@ contract('PayToFutureMiner', function(accounts) {
     assert.equal(expected, 0, "balanceDrawable must be zero");
 
     // Increase time to expire
-    await increaseTime(moment.duration(1, 'day'));
+    await increaseTime(moment.duration(30, 'day'));
 
-    // TODO: actually verify time lock expired
+    // Verify no ether is still frozen
+    balance = await contract.balanceFrozen();
+    expected = 0;
+    assert.equal(expected, balance, "balanceFrozen should be zero");
 
+    // Verify ether is thawed
+    balance = await contract.balanceThawed();
+    expected = ether(4);
+    assert.equal(expected, balance, "balanceThawed should not be zero");
+
+    // Verify ether is now drawable - FIXME
+    // balance = await contract.balanceDrawable();
+    // expected = contract.drawMax;
+    // assert.equal(expected, balance, "balanceDrawable should not be zero");
   });
 
 });
