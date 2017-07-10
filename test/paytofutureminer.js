@@ -84,20 +84,39 @@ contract('PayToFutureMiner', function(accounts) {
 
     expected = await contract.balanceDrawable();
     assert.equal(expected, 0, "balanceDrawable must be zero");
+
+    // Send 1 ether to contract
+    sendTx(accounts[0], contract.address, ether(1));
+
+    // Verify contract balance after send
+    expected = ether(3 + 1);
+    assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
+
+    // Verify all ether is frozen
+    balance = await contract.balanceFrozen();
+    assert.equal(expected, balance);
+
+    // Verify other balances still zero
+    expected = await contract.balanceThawed();
+    assert.equal(expected, 0, "balanceThawed must be zero");
+
+    expected = await contract.balanceDrawable();
+    assert.equal(expected, 0, "balanceDrawable must be zero");
+
   });
 
-  it('verify time lock expires', async function() {
+  it('verify time lock expires - TODO', async function() {
     let contract = await PayToFutureMiner.deployed();
 
     // Verify total contract balance
-    let expected = ether(3);
+    let expected = ether(4);
     assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
 
     // Increase time to expire-1
     await increaseTime(moment.duration(contract.frozenPeriod - 1, 'day'));
 
     // Verify total contract balance again
-    expected = ether(3);
+    expected = ether(4);
     assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
 
     // Verify sent ether is still frozen
