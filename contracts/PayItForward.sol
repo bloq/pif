@@ -74,12 +74,11 @@ contract PayItForward {
   // Withdraw thawed ETH to anyone who requests it
   function transfer(address to, uint value) returns (bool success) {
     // Value size limiting
-    if (value > balanceDrawable())
-      return false;
+    require(value > 0);
+    require(value <= balanceDrawable());
 
     // Draw rate limiting
-    if (lastDraw > (block.timestamp - drawPeriod))
-      return false;
+    require(lastDraw < (block.timestamp - drawPeriod));
 
     // Housekeeping: move thawed funds out of frozen list
     while ((frozen.length > 0) &&
@@ -96,3 +95,4 @@ contract PayItForward {
     return true;
   }
 }
+
