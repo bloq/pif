@@ -51,7 +51,10 @@ contract('PayItForward', function(accounts) {
   it("zero initial balances", async function() {
     let contract = await PayItForward.deployed();
 
-    let expected = await contract.balanceFrozen();
+    let expected = web3.eth.getBalance(contract.address);
+    assert.equal(expected, 0, "contract starting balance must be zero");
+
+    expected = await contract.balanceFrozen();
     assert.equal(expected, 0, "balanceFrozen must be zero");
 
     expected = await contract.balanceThawed();
