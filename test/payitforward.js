@@ -64,6 +64,22 @@ contract('PayItForward', function(accounts) {
     assert.equal(expected, 0, "balanceDrawable must be zero");
   });
 
+  it("zero balance withdrawal fails", async function() {
+    let contract = await PayItForward.deployed();
+
+    let expected = web3.eth.getBalance(contract.address);
+    assert.equal(expected, 0, "contract starting balance must be zero");
+
+    expected = false;
+    try {
+      let rc = await contract.transfer(addresses[0], ether(1));
+      expected = true;
+    } catch(error) {
+      expected = false;
+    }
+    assert.equal(expected, false, "contract withdraw should fail");
+  });
+
   it('send funds to contract', async function() {
     let contract = await PayItForward.deployed();
 
