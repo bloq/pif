@@ -20,13 +20,13 @@ contract PayItForward {
     lastDraw = now - drawPeriod - 1;
   }
 
-  // default ETH recipient endpoint
+  // Freeze received ETH, for later thawing and withdrawal
   function() payable {
     if (msg.value > 0) {
       // Add new frozen amount entry
       frozen.push(FrozenEnt({
         amount:		msg.value,
-        thawTime:	block.timestamp + frozenPeriod,
+        thawTime:	now + frozenPeriod,
       }));
     }
   }
@@ -36,7 +36,7 @@ contract PayItForward {
     // Sum all frozen entries not yet expired
     uint tmpBal = 0;
     for (uint i = 0; i < frozen.length; i++) {
-      if (frozen[i].thawTime > block.timestamp)
+      if (frozen[i].thawTime > now)
         tmpBal += frozen[i].amount;
     }
 
@@ -50,7 +50,7 @@ contract PayItForward {
 
     // Sum all expired frozen entries
     for (uint i = 0; i < frozen.length; i++) {
-      if (frozen[i].thawTime <= block.timestamp)
+      if (frozen[i].thawTime <= now)
         tmpBal += frozen[i].amount;
     }
 
@@ -67,7 +67,7 @@ contract PayItForward {
       drawable = drawMax;
 
     // Draw rate limiting
-    if (lastDraw > (block.timestamp - drawPeriod))
+    if (lastDraw > (now - drawPeriod))
       drawable = 0;
 
     return drawable;
@@ -77,7 +77,7 @@ contract PayItForward {
   function housekeeping() returns (bool success) {
     // Move thawed funds out of frozen list
     while ((frozen.length > 0) &&
-           (frozen[0].thawTime < block.timestamp)) {
+           (frozen[0].thawTime < now)) {
       nThawed += frozen[0].amount;
       delete frozen[0];
     }
@@ -92,14 +92,14 @@ contract PayItForward {
     require(value <= balanceDrawable());
 
     // Draw rate limiting
-    require(lastDraw < (block.timestamp - drawPeriod));
+    require(lastDraw < (now - drawPeriod));
 
     // Housekeeping: move thawed funds out of frozen list
     this.housekeeping();
 
     // Withdraw value from contract
     nThawed -= value;
-    lastDraw = block.timestamp;
+    lastDraw = now;
     to.transfer(value);
 
     return true;
