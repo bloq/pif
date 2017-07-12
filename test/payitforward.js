@@ -132,7 +132,7 @@ contract('PayItForward', function(accounts) {
     assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
 
     // Increase time to expire-1
-    let frozenPeriod = await contract.frozenPeriod();
+    let frozenPeriod = await contract.frozenDefault();
     await increaseTime(moment.duration(frozenPeriod.toNumber() - 60, 'seconds'));
 
     // Verify total contract balance again

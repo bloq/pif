@@ -10,7 +10,8 @@ contract PayItForward {
   uint internal nThawed;	// amount thawed
   uint internal lastDraw;	// timestamp of last draw
 
-  uint constant public frozenPeriod = 30 days;	// length of time ETH is frozen
+  uint constant public frozenMin = 60 seconds;  // Minimum time to freeze ETH
+  uint constant public frozenDefault = 30 days;	// def. time ETH is frozen
   uint constant public drawMax = 1 ether;	// maximum ETH draw amt.
   uint constant public drawPeriod = 60;		// min. seconds between draws
 
@@ -20,15 +21,20 @@ contract PayItForward {
     lastDraw = now - drawPeriod - 1;
   }
 
+  // Freeze received ETH, for later thawing and withdrawal at time >= thawTime
+  function freeze(uint thawTime_) payable {
+    require(msg.value > 0);
+    require(thawTime_ >= (now + frozenMin));
+
+    frozen.push(FrozenEnt({
+      amount:	msg.value,
+      thawTime:	thawTime_,
+    }));
+  }
+
   // Freeze received ETH, for later thawing and withdrawal
   function() payable {
-    if (msg.value > 0) {
-      // Add new frozen amount entry
-      frozen.push(FrozenEnt({
-        amount:		msg.value,
-        thawTime:	now + frozenPeriod,
-      }));
-    }
+    freeze(now + frozenDefault);
   }
 
   // Return balance frozen
