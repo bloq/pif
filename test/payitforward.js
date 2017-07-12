@@ -124,7 +124,7 @@ contract('PayItForward', function(accounts) {
 
   });
 
-  it('verify time lock expires - WIP', async function() {
+  it('verify time lock expires', async function() {
     let contract = await PayItForward.deployed();
 
     // Verify total contract balance
@@ -132,7 +132,8 @@ contract('PayItForward', function(accounts) {
     assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
 
     // Increase time to expire-1
-    await increaseTime(moment.duration(contract.frozenPeriod - 1, 'day'));
+    let frozenPeriod = await contract.frozenPeriod();
+    await increaseTime(moment.duration(frozenPeriod.toNumber() - 60, 'seconds'));
 
     // Verify total contract balance again
     expected = ether(4);
@@ -150,7 +151,7 @@ contract('PayItForward', function(accounts) {
     assert.equal(expected, 0, "balanceDrawable must be zero");
 
     // Increase time to expire
-    await increaseTime(moment.duration(30, 'day'));
+    await increaseTime(moment.duration(61, 'second'));
 
     // Verify no ether is still frozen
     balance = await contract.balanceFrozen();
@@ -162,10 +163,37 @@ contract('PayItForward', function(accounts) {
     expected = ether(4);
     assert.equal(expected, balance, "balanceThawed should not be zero");
 
-    // Verify ether is now drawable - FIXME
-    // balance = await contract.balanceDrawable();
-    // expected = contract.drawMax;
-    // assert.equal(expected, balance, "balanceDrawable should not be zero");
+    // Verify ether is now drawable
+    balance = await contract.balanceDrawable();
+    expected = await contract.drawMax();
+    assert.equal(expected.toNumber(), balance.toNumber(), "balanceDrawable should not be zero");
+  });
+
+  it("drawable withdrawal tests - WIP", async function() {
+    let contract = await PayItForward.deployed();
+
+    // Verify total contract balance
+    let expected = ether(4);
+    assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
+
+    // Verify drawable balance
+    let balance = await contract.balanceDrawable();
+    expected = ether(1);
+    assert.equal(expected, balance, "contract drawable balance must be one");
+
+    try {
+      let rc = await contract.transfer(addresses[0], ether(2));
+      expected = true;
+    } catch(error) {
+      expected = false;
+    }
+    assert.equal(expected, false, "contract over-withdraw 1 should fail");
+
+    // Verify total contract balance
+    expected = ether(4);
+    assert.equal(expected, web3.eth.getBalance(contract.address).toNumber());
+
+    // TODO
   });
 
 });
