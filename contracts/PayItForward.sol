@@ -6,16 +6,18 @@ contract PayItForward {
     uint thawTime;	// timestamp when amount may be thawed (entry expires)
   }
 
-  FrozenEnt[] frozen;	// list of frozen funds
-  uint nThawed = 0;	// amount thawed
-  uint lastDraw = 0;	// timestamp of last draw
+  FrozenEnt[] internal frozen;	// list of frozen funds
+  uint internal nThawed;	// amount thawed
+  uint internal lastDraw;	// timestamp of last draw
 
-  uint constant public frozenPeriod = 30; // number of days deposited ETH is frozen
-  uint constant public drawMax = 1 ether;
-  uint constant public drawPeriod = 60;	  // number of seconds between draws
+  uint constant public frozenPeriod = 30 days;	// length of time ETH is frozen
+  uint constant public drawMax = 1 ether;	// maximum ETH draw amt.
+  uint constant public drawPeriod = 60;		// min. seconds between draws
 
   // constructor
   function PayItForward() {
+    nThawed = 0;
+    lastDraw = now - drawPeriod - 1;
   }
 
   // default ETH recipient endpoint
@@ -23,8 +25,8 @@ contract PayItForward {
     if (msg.value > 0) {
       // Add new frozen amount entry
       frozen.push(FrozenEnt({
-        amount:	msg.value,
-        thawTime:	block.timestamp + (frozenPeriod * 24 * 60 * 60),
+        amount:		msg.value,
+        thawTime:	block.timestamp + frozenPeriod,
       }));
     }
   }
@@ -71,6 +73,18 @@ contract PayItForward {
     return drawable;
   }
 
+  // Thaw ETH, if any
+  function housekeeping() returns (bool success) {
+    // Move thawed funds out of frozen list
+    while ((frozen.length > 0) &&
+           (frozen[0].thawTime < block.timestamp)) {
+      nThawed += frozen[0].amount;
+      delete frozen[0];
+    }
+
+    return true;
+  }
+
   // Withdraw thawed ETH to anyone who requests it
   function transfer(address to, uint value) returns (bool success) {
     // Value size limiting
@@ -81,11 +95,7 @@ contract PayItForward {
     require(lastDraw < (block.timestamp - drawPeriod));
 
     // Housekeeping: move thawed funds out of frozen list
-    while ((frozen.length > 0) &&
-           (frozen[0].thawTime < block.timestamp)) {
-      nThawed += frozen[0].amount;
-      delete frozen[0];
-    }
+    this.housekeeping();
 
     // Withdraw value from contract
     nThawed -= value;
