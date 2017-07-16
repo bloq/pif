@@ -18,3 +18,9 @@ continued security of the system.
 Another outcome, less likely but possible, is that miners are asleep
 at the wheel, and the general public races to claim the funds.
 
+## Current status
+
+The contract and tests are currently under active development (WIP).
+
+Do not use with Real Money.
+
